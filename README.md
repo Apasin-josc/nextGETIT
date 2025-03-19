@@ -597,6 +597,32 @@ export const Sidebar = () => {
 
 ### **ZUSTAND - UI STORE**
 
+to use ZUSTAND we're going to first install this package with
+
+```
+npm i zustand
+```
+
+(src\store\ui\ui-store.ts)
+
+<!-- import { create } from "zustand";
+
+interface State {
+  isSideMenuOpen: boolean;
+
+  openSideMenu: () => void;
+  closeSideMenu: () => void;
+}
+
+export const useUIStore = create<State>()((set) => ({
+  isSideMenuOpen: false,
+
+  openSideMenu: () => set({ isSideMenuOpen: true }),
+  closeSideMenu: () => set({ isSideMenuOpen: false }),
+})); -->
+
+now we can use our store on our SideBar component (src\components\ui\sidebar\Sidebar.tsx)
+
 # **SNIPPETS IN NEXTJS**
 
 1. to create a layout root component
@@ -650,3 +676,4 @@ export const TopMenu = () => {
 
 1. npm install react-icons --save
 2. npm install zustand
+3. npm install clsx // this package helps us to add conditional classes in tailwind
