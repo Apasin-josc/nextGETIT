@@ -85,10 +85,10 @@ export const TopMenu = () => {
 }
  -->
 
- ⚠️⚠️since I created the first component I'm going to add it into the barrel file (index.ts) file to export it from my components folder⚠️⚠️
+⚠️⚠️since I created the first component I'm going to add it into the barrel file (index.ts) file to export it from my components folder⚠️⚠️
 
- 2. now we can use our TopMenu component inside the shoplayout like this: 
- 
+2.  now we can use our TopMenu component inside the shoplayout like this:
+
  <!-- import { TopMenu } from "@/components";
 
 export default function ShopLayout({
@@ -156,6 +156,7 @@ export const TopMenu = () => {
 } -->
 
 ### **404 personal pages**
+
 for that we can achieve it by creating a not-found.tsx file
 (src\app\(shop)\category\not-found.tsx)
 
@@ -170,6 +171,7 @@ this is a error component predetermined by next, inside this component over the 
 } -->
 
 so inde of our (src\app\(shop)\category\[id]\page.tsx) we can have this code:
+
 <!-- import { notFound } from "next/navigation";
 
 interface Props {
@@ -191,6 +193,7 @@ export default async function ({ params }: Props) {
 } -->
 
 ### **customizing the notfound page**
+
 (src\components\ui\not-found\PageNotFound.tsx)
 
 <!-- export const PageNotFound = () => {
@@ -200,6 +203,7 @@ export default async function ({ params }: Props) {
 } -->
 
 (src\components\index.ts)
+
 <!-- export * from './ui/not-found/PageNotFound' -->
 
 now we can return this component on our (src\app\(shop)\category\not-found.tsx)
@@ -248,6 +252,207 @@ export const PageNotFound = () => {
 
 ### **Component Title**
 
+for the home page we're going to add a title, that's going to show the category where we are (src\components\ui\title\Title.tsx)
+index.ts
+
+<!-- export * from "./ui/title/Title"; -->
+
+with this now we can import our Title on the main page (src\app\(shop)\page.tsx)
+
+<!-- import { Title } from "@/components";
+
+export default function Home() {
+  return (
+    <>
+      <Title />
+    </>
+  );
+} -->
+
+now everything is just matter of editing our component
+
+<!-- import { montserratAlternates } from "@/config/fonts";
+
+interface Props {
+    title: string;
+    subtitle?: string;
+    className?: string;
+}
+
+export const Title = ({ title, subtitle, className }: Props) => {
+    return (
+        <div className={`mt-3 ${className}`}>
+            <h1 className={` ${montserratAlternates.className} antialiased text-4xl font-semibold my-10`}>{title}</h1>
+            {
+                subtitle && (
+                    <h3 className="text-xl mb-5">{subtitle}</h3>
+                )
+            }
+        </div>
+    )
+}
+ -->
+
+👁👁 now that we added this new props that our component expects to recieve we're going to need to go back to our main page.tsx and add this:
+
+<!-- import { Title } from "@/components";
+
+export default function Home() {
+return (
+<>
+<Title
+        title="Shop"
+        subtitle="All the products"
+        className="mb-2" />
+</>
+);
+} -->
+
+### **Products Grid**
+
+we can have a products grid by creating a new component over (src\components\products\product-grid\ProductGrid.tsx)
+
+<!-- import { Product } from "@/interfaces";
+import { ProductGridItem } from "./ProductGridItem";
+
+interface Props {
+    products: Product[];
+}
+export const ProductGrid = ({ products }: Props) => {
+    return (
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-10 mb-10">
+            {
+                products.map(product => (
+                    <ProductGridItem key={product.slug}
+                        product={product}
+                    />
+                ))
+            }
+
+        </div>
+    )
+} -->
+
+the Props interface is declared on (src\interfaces\product.interface.ts)
+
+<!-- export interface Product {
+  //todo: id: string;
+  description: string;
+  images: string[];
+  inStock: number;
+  price: number;
+  sizes: ValidSizes[];
+  slug: string;
+  tags: string[];
+  title: string;
+  type: ValidTypes;
+  gender: "men" | "women" | "kid" | "unisex";
+}
+
+export type ValidSizes = "XS" | "S" | "M" | "L" | "XL" | "XXL" | "XXXL";
+export type ValidTypes = "shirts" | "pants" | "hoodies" | "hats"; -->
+
+and as you can see we have another component called ProductGridItem this is communicating with our ProductGrid component
+
+<!-- import { Product } from "@/interfaces";
+import Image from "next/image";
+import Link from "next/link";
+
+interface Props {
+    product: Product;
+}
+export const ProductGridItem = ({ product }: Props) => {
+    return (
+        <div className="rounded-md overflow-hidden fade-in">
+            <Link href={`/product/${product.slug}`}>
+                <Image
+                    src={`/products/${product.images[0]}`}
+                    alt={product.title}
+                    className="w-full object-cover"
+                    width={500}
+                    height={500}
+                />
+            </Link>
+
+            <div className="p-4 flex flex-col">
+                <Link href={`/product/${product.slug}`}>
+                    {product.title}
+                </Link>
+                <span className="font-bold">${product.price}</span>
+
+            </div>
+        </div>
+    )
+} -->
+
+we can import our productgrid component on our shop page.tsx(src\app\(shop)\page.tsx)
+
+<!-- import { ProductGrid, Title } from "@/components";
+import { initialData } from "@/seed/seed";
+
+const products = initialData.products;
+
+export default function Home() {
+  return (
+    <>
+      <Title
+        title="Shop"
+        subtitle="All the products"
+        className="mb-2" />
+
+      <ProductGrid
+        products={products}
+      />
+    </>
+  );
+} -->
+
+### Changing the **IMAGE** with a mouseover effect
+
+we can achieve this by adding a state, OJITO, since you are waiting for the client === **'use client'**
+
+<!-- 'use client';
+
+import { Product } from "@/interfaces";
+import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
+
+interface Props {
+    product: Product;
+}
+export const ProductGridItem = ({ product }: Props) => {
+    !using the useState hook
+    const [displayImage, setDisplayImage] = useState(product.images[0]);
+    return (
+        <div className="rounded-md overflow-hidden fade-in">
+            <Link href={`/product/${product.slug}`}>
+                <Image
+                    src={`/products/${displayImage}`}
+                    alt={product.title}
+                    className="w-full object-cover rounded"
+                    width={500}
+                    height={500}
+                    !applying the useState hook to display the second image on the mouseEnter event
+                    onMouseEnter={() => setDisplayImage(product.images[1])}
+                    onMouseLeave={() => setDisplayImage(product.images[0])}
+                />
+            </Link>
+
+            <div className="p-4 flex flex-col">
+                <Link
+                    className="hover:text-blue-500"
+                    href={`/product/${product.slug}`}>
+                    {product.title}
+                </Link>
+                <span className="font-bold">${product.price}</span>
+
+            </div>
+        </div>
+    )
+} -->
+
+### **Lateral SideBar Menu**
 
 # **SNIPPETS IN NEXTJS**
 
