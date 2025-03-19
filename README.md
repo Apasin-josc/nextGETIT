@@ -454,6 +454,149 @@ export const ProductGridItem = ({ product }: Props) => {
 
 ### **Lateral SideBar Menu**
 
+To achieve this sidebar menu we're going to implment it from zero just using tailwing, because **why not**, is going to hepl us to learn a little more about tailwind 🐘
+(src\components\ui\sidebar\Sidebar.tsx)
+[export * from "./ui/sidebar/Sidebar";]
+
+and now we can import this rafc component on our layout.tsx (src\app\(shop)\layout.tsx)
+
+<!-- import { Sidebar, TopMenu } from "@/components";
+
+export default function ShopLayout({
+    children
+}: {
+    children: React.ReactNode;
+}) {
+    return (
+        <main className="min-h-screen">
+            <TopMenu />
+            <Sidebar />
+            <div className="px-0 sm:px-10">
+                {children}
+            </div>
+        </main>
+    );
+} -->
+
+since the client is using the sidebar menu we need to use the 'use client'
+
+<!-- 'use client';
+import Link from "next/link";
+import { IoCloseOutline, IoLogInOutline, IoLogOutOutline, IoPeopleOutline, IoPersonOutline, IoSearchOutline, IoShirtOutline, IoTicketOutline } from "react-icons/io5"
+
+export const Sidebar = () => {
+    return (
+        <div>
+            {/* Background black */}
+            <div
+                className="fixed top-0 left-0 w-screen h-screen z-10 bg-black opacity-30"
+            >
+            </div>
+
+            {/* blur */}
+            <div
+                className="fade-in fixed top-0 left-0 w-screen h-screen z-10 backdrop-filter backdrop-blur-sm"
+            >
+                {/* side menu */}
+                <nav
+                    //todo: slide effect
+                    className="fixed p-5 right-0 top-0 w-[500px] h-screen bg-white z-20 shadow-2xl transform transition-all duration-300">
+
+                    <IoCloseOutline
+                        size={50}
+                        className="absolute top-5 right-5 cursor-pointer"
+                        onClick={() => console.log(`click`)}
+                    />
+
+                    {/* Input for the search */}
+                    <div className="relative mt-14">
+                        <IoSearchOutline
+                            size={20}
+                            className="absolute top-2 left-2 text-gray-400"
+                        />
+                        <input
+                            type="text"
+                            placeholder="Search"
+                            className="w-full bg-gray-50 rounded pl-10 py-1 pr-10 border-b-2 text-xl border-gray-200 focus:outline-none focus:border-blue-500"
+                        />
+                    </div>
+
+
+                    {/* Menu Options */}
+                    <Link
+                        href="/"
+                        className="flex items-center mt-10 p-2 hover:bg-gray-100 rounded transition-all"
+                    >
+                        <IoPersonOutline
+                            size={30} />
+                        <span className="ml-3 text-xl">Profile</span>
+                    </Link>
+
+                    <Link
+                        href="/"
+                        className="flex items-center mt-10 p-2 hover:bg-gray-100 rounded transition-all"
+                    >
+                        <IoTicketOutline
+                            size={30} />
+                        <span className="ml-3 text-xl">Orders</span>
+                    </Link>
+
+                    <Link
+                        href="/"
+                        className="flex items-center mt-10 p-2 hover:bg-gray-100 rounded transition-all"
+                    >
+                        <IoLogInOutline
+                            size={30} />
+                        <span className="ml-3 text-xl">Log-In</span>
+                    </Link>
+
+                    <Link
+                        href="/"
+                        className="flex items-center mt-10 p-2 hover:bg-gray-100 rounded transition-all"
+                    >
+                        <IoLogOutOutline
+                            size={30} />
+                        <span className="ml-3 text-xl">Log-Out</span>
+                    </Link>
+
+                    {/* line separator */}
+                    <div className="w-full h-px bg-gray-200 my-10">
+
+                        <Link
+                            href="/"
+                            className="flex items-center mt-10 p-2 hover:bg-gray-100 rounded transition-all"
+                        >
+                            <IoShirtOutline
+                                size={30} />
+                            <span className="ml-3 text-xl">Products</span>
+                        </Link>
+
+                        <Link
+                            href="/"
+                            className="flex items-center mt-10 p-2 hover:bg-gray-100 rounded transition-all"
+                        >
+                            <IoTicketOutline
+                                size={30} />
+                            <span className="ml-3 text-xl">Orders</span>
+                        </Link>
+
+                        <Link
+                            href="/"
+                            className="flex items-center mt-10 p-2 hover:bg-gray-100 rounded transition-all"
+                        >
+                            <IoPeopleOutline
+                                size={30} />
+                            <span className="ml-3 text-xl">Users</span>
+                        </Link>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    )
+} -->
+
+### **ZUSTAND - UI STORE**
+
 # **SNIPPETS IN NEXTJS**
 
 1. to create a layout root component
@@ -506,3 +649,4 @@ export const TopMenu = () => {
 # **libraries used**
 
 1. npm install react-icons --save
+2. npm install zustand
