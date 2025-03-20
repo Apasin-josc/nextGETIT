@@ -1738,3 +1738,5 @@ export const TopMenu = () => {
 2. npm install zustand [https://zustand-demo.pmnd.rs/]
 3. npm install clsx // this package helps us to add conditional classes in tailwind
 4. npm install swiper //this package helps us to add the slideshow of images on the project! like the 🎠🎪💫 [https://swiperjs.com/react] --> for this project using the thumbs gallery demo [https://swiperjs.com/demos]
+5. npm install prisma --save-dev
+6. npm install -D ts-node --> this library helps us to execute typescript code in node
