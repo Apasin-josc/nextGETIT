@@ -1,9 +1,28 @@
-import { ProductGrid, Title } from "@/components";
-import { initialData } from "@/seed/seed";
+import { getPaginatedProductsWithImages } from "@/actions";
+import { Pagination, ProductGrid, Title } from "@/components";
+import { redirect } from "next/navigation";
 
-const products = initialData.products;
+interface Props {
+  searchParams: Promise<{
+    page?: string;
+  }>;
+}
 
-export default function Home() {
+export default async function Home({ searchParams }: Props) {
+
+  const resolvedParams = await searchParams;
+  const currentPageManual = resolvedParams.page ? parseInt(resolvedParams.page) : 1;
+  console.log(currentPageManual);
+
+  const { products, currentPage, totalPages } = await getPaginatedProductsWithImages({});
+
+  console.log({ currentPage, totalPages });
+
+  //! when we don't have any products -> go to home page
+  if (products.length === 0) {
+    redirect('/')
+  }
+
   return (
     <>
       <Title
@@ -14,6 +33,9 @@ export default function Home() {
       <ProductGrid
         products={products}
       />
+
+      <Pagination totalPages={totalPages} />
+
     </>
   );
 }
