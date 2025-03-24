@@ -1,10 +1,11 @@
 export const revalidate = 604800; //7 days
 
 import { getProductBySlug } from "@/actions";
-import { ProductMobileSlideShow, ProductSlideShow, QuantitySelector, SizeSelector, StockLabel } from "@/components";
+import { ProductMobileSlideShow, ProductSlideShow, StockLabel } from "@/components";
 import { montserratAlternates } from "@/config/fonts";
 import { Metadata, ResolvingMetadata } from "next";
 import { notFound } from "next/navigation";
+import { AddToCart } from "./ui/AddToCart";
 
 interface Props {
     params: {
@@ -77,18 +78,8 @@ export default async function ({ params }: Props) {
                 </h1>
                 <p className="text-lg mb-5"> ${product.price}</p>
 
-                {/* size selector */}
-                <SizeSelector
-                    selectedSize={product.sizes[0]}
-                    availableSizes={product.sizes}
-                />
+                <AddToCart product={product} />
 
-                {/* quantity selector */}
-                <QuantitySelector
-                    quantity={2} />
-
-                {/* button */}
-                <button className="btn-primary my-5">Add to Cart</button>
 
                 {/* description */}
                 <h3 className="font-bold text-sm"> Description</h3>
