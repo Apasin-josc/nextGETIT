@@ -9,3 +9,8 @@
 7. run the project `npm run dev`
 
 ### Commands to run the project in **PROD**
+
+
+
+### Generate build in PRODUCTION
+npm run build
