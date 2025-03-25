@@ -682,3 +682,549 @@ export const ProductsInCart = () => {
         </>
     )
 } -->
+
+### changing quantity from the sopping cart 
+(src\store\cart\cart-store.ts)
+
+<!-- import type { CartProduct } from "@/interfaces"
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+
+
+interface State{
+    //products in cart
+    cart: CartProduct[];
+
+
+    getTotalItems: () => number;
+
+    addProductToCart: (product: CartProduct) => void;
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    updateProductQuantity: (product: CartProduct, quantity: number) => void;
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //removeProduct
+}
+
+export const useCartStore = create<State>()( 
+
+
+    //next is going to try to create all the page, but with the persist
+    //it will try to get the data from the local storage
+    //if it doesn't exist, it will create the store with the initial state
+    persist(
+        (set, get) => ({
+            cart: [],
+            //Methods
+            getTotalItems: () => {
+                const {cart} = get();
+                //reduce the cart to get the total quantity of items
+                return cart.reduce((total, item ) => total + item.quantity, 0);
+            },
+
+
+            addProductToCart: (product: CartProduct) => {
+                const {cart} = get();
+        
+                //1. check if the product exists on the cart with the selected size
+                const productInCart = cart.some(
+                    (item) => (item.id === product.id && item.size === product.size)
+                );
+        
+                if(!productInCart){
+                    set({cart: [...cart, product]})
+                    return;
+                }
+        
+                //2. we know that the product exist by size, we need to increment
+                const updatedCartProducts = cart.map( (item) => {
+                    
+                    if(item.id === product.id && item.size === product.size){
+                        return {...item, quantity: item.quantity + product.quantity}
+                    }
+        
+                    return item;
+                });
+                set({cart: updatedCartProducts})
+        
+            },
+            !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            updateProductQuantity: (product: CartProduct, quantity: number) => {
+                const {cart} = get ();
+                const updatedCartProducts = cart.map(item => {
+                    if(item.id === product.id && item.size === product.size){
+                        return {...item, quantity: quantity};
+                    };
+                    return item
+                });
+                set({cart: updatedCartProducts});
+            }
+            !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        })
+        ,{
+            name: 'shopping-cart',
+        }
+    )
+) -->
+
+now with this function setted up, we can use the zustand store on our products in cart like this: (src\app\(shop)\cart\ui\ProductsInCart.tsx)
+(src\app\(shop)\cart\ui\ProductsInCart.tsx)
+<!-- 'use client';
+
+import Image from 'next/image';
+import { useCartStore } from "@/store";
+import { QuantitySelector } from '@/components';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+
+
+export const ProductsInCart = () => {
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    const updateProductQuantity = useCartStore(state => state.updateProductQuantity);
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    const [loaded, setLoaded] = useState(false);
+    const productsInCart = useCartStore(state => state.cart);
+
+    useEffect(() => {
+        setLoaded(true);
+    }, [])
+
+    if (!loaded) {
+        return <p>Loading...</p>
+    }
+
+    return (
+        <>
+            {
+                productsInCart.map(product => (
+                    <div key={`${product.slug}-${product.size}`} className="flex mb-5">
+                        <Image
+                            src={`/products/${product.image}`}
+                            alt={product.slug}
+                            width={100}
+                            height={100}
+                            style={{
+                                width: '100px',
+                                height: '100px',
+                            }}
+                            className="mr-5 rounded"
+                        />
+
+                        <div>
+                            <Link
+                                className='hover:underline cursor-pointer'
+                                href={`/product/${product.slug}`}>
+                                {product.size} - {product.title}
+                            </Link>
+                            <p> ${product.price}</p>
+                            !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                            <QuantitySelector
+                                quantity={product.quantity}
+                                onQuantityChanged={quantity => updateProductQuantity(product, quantity)} />
+                            !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                            <button className="underline mt-3">
+                                Remove
+                            </button>
+                        </div>
+
+                    </div>
+                ))
+            }
+        </>
+    )
+}
+ -->
+
+
+ ### removing items from the sopping cart 
+(src\store\cart\cart-store.ts)
+
+<!-- import type { CartProduct } from "@/interfaces"
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+
+
+interface State{
+    //products in cart
+    cart: CartProduct[];
+
+
+    getTotalItems: () => number;
+
+    addProductToCart: (product: CartProduct) => void;
+    updateProductQuantity: (product: CartProduct, quantity: number) => void;
+    removeProduct: (product: CartProduct) => void;
+}
+
+export const useCartStore = create<State>()( 
+
+
+    //next is going to try to create all the page, but with the persist
+    //it will try to get the data from the local storage
+    //if it doesn't exist, it will create the store with the initial state
+    persist(
+        (set, get) => ({
+            cart: [],
+            //Methods
+            getTotalItems: () => {
+                const {cart} = get();
+                //reduce the cart to get the total quantity of items
+                return cart.reduce((total, item ) => total + item.quantity, 0);
+            },
+
+
+            addProductToCart: (product: CartProduct) => {
+                const {cart} = get();
+        
+                //1. check if the product exists on the cart with the selected size
+                const productInCart = cart.some(
+                    (item) => (item.id === product.id && item.size === product.size)
+                );
+        
+                if(!productInCart){
+                    set({cart: [...cart, product]})
+                    return;
+                }
+        
+                //2. we know that the product exist by size, we need to increment
+                const updatedCartProducts = cart.map( (item) => {
+                    
+                    if(item.id === product.id && item.size === product.size){
+                        return {...item, quantity: item.quantity + product.quantity}
+                    }
+        
+                    return item;
+                });
+                set({cart: updatedCartProducts})
+        
+            },
+            updateProductQuantity: (product: CartProduct, quantity: number) => {
+                const {cart} = get ();
+                const updatedCartProducts = cart.map(item => {
+                    if(item.id === product.id && item.size === product.size){
+                        return {...item, quantity: quantity};
+                    };
+                    return item
+                });
+                set({cart: updatedCartProducts});
+            },
+            removeProduct: (product: CartProduct) => {
+                const {cart} = get();
+                const updatedCartProducts = cart.filter(
+                    item => item.id !== product.id || item.size !== product.size
+                );
+                set({cart: updatedCartProducts});
+            },
+        })
+        ,{
+            name: 'shopping-cart',
+        }
+    )
+) -->
+
+(src\app\(shop)\cart\ui\ProductsInCart.tsx)
+
+<!-- 'use client';
+
+import Image from 'next/image';
+import { useCartStore } from "@/store";
+import { QuantitySelector } from '@/components';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+
+
+export const ProductsInCart = () => {
+
+    const updateProductQuantity = useCartStore(state => state.updateProductQuantity);
+    const removeProduct = useCartStore(state => state.removeProduct);
+    const [loaded, setLoaded] = useState(false);
+    const productsInCart = useCartStore(state => state.cart);
+
+    useEffect(() => {
+        setLoaded(true);
+    }, [])
+
+    if (!loaded) {
+        return <p>Loading...</p>
+    }
+
+    return (
+        <>
+            {
+                productsInCart.map(product => (
+                    <div key={`${product.slug}-${product.size}`} className="flex mb-5">
+                        <Image
+                            src={`/products/${product.image}`}
+                            alt={product.slug}
+                            width={100}
+                            height={100}
+                            style={{
+                                width: '100px',
+                                height: '100px',
+                            }}
+                            className="mr-5 rounded"
+                        />
+
+                        <div>
+                            <Link
+                                className='hover:underline cursor-pointer'
+                                href={`/product/${product.slug}`}>
+                                {product.size} - {product.title}
+                            </Link>
+                            <p> ${product.price}</p>
+                            <QuantitySelector
+                                quantity={product.quantity}
+                                onQuantityChanged={quantity => updateProductQuantity(product, quantity)} />
+                            <button
+                                onClick={() => removeProduct(product)}
+                                className="underline mt-3">
+                                Remove
+                            </button>
+                        </div>
+
+                    </div>
+                ))
+            }
+        </>
+    )
+} -->
+
+### summary order !!!!!!!!!!!!!!!!! 💡💡🛒💡🛒
+
+
+(src\store\cart\cart-store.ts)
+
+<!-- import type { CartProduct } from "@/interfaces"
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+
+
+interface State{
+    //products in cart
+    cart: CartProduct[];
+
+
+    getTotalItems: () => number;
+   /*getSummaryInformation: () => void; */
+    getSummaryInformation: () => {
+     subTotal: number;
+     tax: number;
+     total: number;
+     itemsInCart: number;
+     };
+    addProductToCart: (product: CartProduct) => void;
+    updateProductQuantity: (product: CartProduct, quantity: number) => void;
+    removeProduct: (product: CartProduct) => void;
+}
+
+export const useCartStore = create<State>()( 
+
+
+    //next is going to try to create all the page, but with the persist
+    //it will try to get the data from the local storage
+    //if it doesn't exist, it will create the store with the initial state
+    persist(
+        (set, get) => ({
+            cart: [],
+            //Methods
+            getTotalItems: () => {
+                const {cart} = get();
+                //reduce the cart to get the total quantity of items
+                return cart.reduce((total, item ) => total + item.quantity, 0);
+            },
+
+            getSummaryInformation: () => {
+                const {cart} = get();
+                const subTotal = cart.reduce(
+                    (subTotal, product) => (product.quantity * product.price) + subTotal, 0 
+                );
+                const tax = subTotal * 0.15;
+                const total = subTotal + tax;
+                const itemsInCart = cart.reduce((total, item ) => total + item.quantity, 0);
+
+                return{
+                    subTotal, tax, total, itemsInCart
+                }
+
+            },
+
+            addProductToCart: (product: CartProduct) => {
+                const {cart} = get();
+        
+                //1. check if the product exists on the cart with the selected size
+                const productInCart = cart.some(
+                    (item) => (item.id === product.id && item.size === product.size)
+                );
+        
+                if(!productInCart){
+                    set({cart: [...cart, product]})
+                    return;
+                }
+        
+                //2. we know that the product exist by size, we need to increment
+                const updatedCartProducts = cart.map( (item) => {
+                    
+                    if(item.id === product.id && item.size === product.size){
+                        return {...item, quantity: item.quantity + product.quantity}
+                    }
+        
+                    return item;
+                });
+                set({cart: updatedCartProducts})
+        
+            },
+            updateProductQuantity: (product: CartProduct, quantity: number) => {
+                const {cart} = get ();
+                const updatedCartProducts = cart.map(item => {
+                    if(item.id === product.id && item.size === product.size){
+                        return {...item, quantity: quantity};
+                    };
+                    return item
+                });
+                set({cart: updatedCartProducts});
+            },
+            removeProduct: (product: CartProduct) => {
+                const {cart} = get();
+                const updatedCartProducts = cart.filter(
+                    item => item.id !== product.id || item.size !== product.size
+                );
+                set({cart: updatedCartProducts});
+            },
+        })
+        ,{
+            name: 'shopping-cart',
+        }
+    )
+) -->
+
+NOW we can use this function to display the information on our cart page.tsx
+(src\app\(shop)\cart\page.tsx)
+
+
+for this we're goign to move all the order summary code to a new component to 'use client' (src\app\(shop)\cart\ui\OrderSummary.tsx)
+
+<!-- 'use client';
+
+import { useCartStore } from "@/store";
+import { useEffect, useState } from "react";
+
+export const OrderSummary = () => {
+
+
+    const [loaded, setLoaded] = useState(false);
+
+    const summaryInformation = useCartStore(state => state.getSummaryInformation);
+    const { subTotal, tax, total, itemsInCart } = summaryInformation();
+
+    useEffect(() => {
+        setLoaded(true);
+    }, [])
+
+    if (!loaded) return <p> Loading... </p>
+
+    return (
+        <div className="grid grid-cols-2">
+
+            <span>#of Products</span>
+            <span className="text-right">{itemsInCart === 1 ? '1 article' : `${itemsInCart} articles`}</span>
+
+            <span>subtotal</span>
+            <span className="text-right">{subTotal}</span>
+
+            <span>taxes (15%)</span>
+            <span className="text-right">{tax}</span>
+
+            <span className="mt-5 text-2xl">total: </span>
+            <span className="mt-5 text-2xl text-right">{total}</span>
+
+
+        </div>
+    )
+}
+ -->
+
+ dont forget to import this component on the page.tsx (src\app\(shop)\cart\page.tsx)
+
+
+
+### Currency Format
+
+(src\utils\currencyFormat.ts)
+
+<!-- export const currencyFormat = (value: number) => {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }).format(value);
+} -->
+
+(src\app\(shop)\cart\ui\OrderSummary.tsx)
+<!-- 'use client';
+
+import { useCartStore } from "@/store";
+import { currencyFormat } from "@/utils";
+import { useEffect, useState } from "react";
+
+export const OrderSummary = () => {
+
+
+    const [loaded, setLoaded] = useState(false);
+
+    const summaryInformation = useCartStore(state => state.getSummaryInformation);
+    const { subTotal, tax, total, itemsInCart } = summaryInformation();
+
+    useEffect(() => {
+        setLoaded(true);
+    }, [])
+
+    if (!loaded) return <p> Loading... </p>
+
+    return (
+        <div className="grid grid-cols-2">
+
+            <span>#of Products</span>
+            <span className="text-right">{itemsInCart === 1 ? '1 article' : `${itemsInCart} articles`}</span>
+
+            <span>subtotal</span>
+            <span className="text-right">{currencyFormat(subTotal)}</span>
+
+            <span>taxes (15%)</span>
+            <span className="text-right">{currencyFormat(tax)}</span>
+
+            <span className="mt-5 text-2xl">total: </span>
+            <span className="mt-5 text-2xl text-right">{currencyFormat(total)}</span>
+
+
+        </div>
+    )
+}
+ -->
+
+ ### Empty Shopping Cart
+
+(src\components\ui\top-menu\TopMenu.tsx)
+
+
+<!--                  <Link href="/search" className="mx-2">
+                    <IoSearchOutline className="w-5 h-5" />
+                </Link>
+
+                !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                <Link href={
+                    ((totalItemsInCart === 0) && loaded)
+                        ? '/empty'
+                        : '/cart'
+                !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                } className="mx-2">
+                    <div className="relative">
+                        {
+                            (loaded && totalItemsInCart > 0) && (
+                                <span className="fade-in absolute text-xs px-1 rounded-full font-bold -top-2 -right-2 bg-blue-700 text-white">
+                                    {totalItemsInCart}
+                                </span>
+                            )
+                        }
+                        <IoCartOutline className="w-5 h-5" />
+                    </div>
+                </Link> -->
